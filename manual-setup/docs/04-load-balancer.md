@@ -4,7 +4,7 @@ This section establishes the **"Front Door"** of your Kubernetes cluster.
 
 In a production cluster, you cannot have your workers talk directly to a single Control Plane node. If that node dies, your cluster becomes unmanageable. Instead, we use a **Load Balancer** to distribute traffic across multiple Control Plane nodes.
 
-![Load Balancer Architecture](manual-setup/architecture/lb-architecture.png)
+![Load Balancer Architecture](../architecture/lb-architecture.png)
 
 ## The Two Architectures
 
