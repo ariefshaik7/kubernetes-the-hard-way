@@ -156,6 +156,11 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 
 ---
 
+> **Note**:  Point Kube-VIP to the `admin.conf` 
+> [Apply the Super-Admin Fix (Kube-VIP)](04b-lb-kube-vip.md#4-apply-the-super-admin-fix-critical-for-k8s-v129)
+
+---
+
 ### 3. Save Join Commands
 
 At the end of `kubeadm init`, **copy and store**:

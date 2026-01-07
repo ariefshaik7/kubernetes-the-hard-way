@@ -44,6 +44,7 @@ ip a
 ### 2. Configure Variables
 
 Set these environment variables. **Customize the VIP and Interface** for your network.
+**Target:** Run on **ALL Control Plane Nodes**
 
 ```
 # 1. The Virtual IP you want to assign to the cluster (Must be unused!)
@@ -61,6 +62,7 @@ KVVERSION=$(curl -sL https://api.github.com/repos/kube-vip/kube-vip/releases | j
 ### 3. Generate the Manifest
 
 We use `ctr` (the Containerd CLI) to run the image strictly to generate the configuration YAML.
+**Target:** Run on **ALL Control Plane Nodes**
 
 ```
 
@@ -86,7 +88,7 @@ kube-vip manifest pod \
 
 Kubernetes v1.29 changed how permissions work during bootstrap. We must point Kube-VIP to the special `super-admin.conf` file, or the cluster initialization will time out.
 
-Solution (only run on the node which runs `kubeadm init`):
+**Target:** Run on  **the node which runs `kubeadm init`**
 
 - command pre-kubeadm:
     

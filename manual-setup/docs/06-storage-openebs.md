@@ -174,7 +174,15 @@ helm install openebs openebs/openebs \
 
 ```
 
+> **Note**: Loki is trying to run **3 Replicas** (Copies) for High Availability.
+> It has a rule: _"Do not put two Loki pods on the same server."_ (This is called Anti-Affinity).
+> **3 Control Plane nodes** are "Tainted" (marked as "Management Only"), so standard apps are forbidden from running there.
+> Since we have 2 worker nodes, you should scale Loki down to **2 replicas** so they fit perfectly.
 
+Run this command:
+```
+kubectl scale statefulset openebs-loki --replicas=2 -n openebs
+```
 
 ---
 
@@ -248,7 +256,7 @@ kubectl get sc
 
 ### Create a Test PVC
 
-**File:** `manifests/storage/test-pvc.yaml`
+**File:** `test-pvc.yaml`
 
 ```yaml
 apiVersion: v1
@@ -266,7 +274,7 @@ spec:
 Apply:
 
 ```bash
-kubectl apply -f manifests/storage/test-pvc.yaml
+kubectl apply -f test-pvc.yaml
 kubectl get pvc
 ```
 

@@ -71,7 +71,6 @@ mkdir -p /etc/kubernetes/enc
 
 ```bash
 sudo tee /etc/kubernetes/enc/enc.yaml <<'EOF'
-```yaml
 ---
 apiVersion: apiserver.config.k8s.io/v1
 kind: EncryptionConfiguration
