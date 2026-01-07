@@ -70,7 +70,7 @@ mkdir -p /etc/kubernetes/enc
 ```
 
 ```bash
-sudo tee /etc/kubernetes/enc/enc.yaml <<EOF
+sudo tee /etc/kubernetes/enc/enc.yaml <<'EOF'
 ```yaml
 ---
 apiVersion: apiserver.config.k8s.io/v1
@@ -274,6 +274,8 @@ This forces Kubernetes to:
     
 - Re-write them using the encryption provider
     
+
+Refer [here](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/) for more
 
 ---
 Next: [Service Load Balancing (MetalLB – Layer 4)](08-metallb.md)

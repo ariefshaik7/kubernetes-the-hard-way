@@ -6,6 +6,9 @@ In a production cluster, you cannot have your workers talk directly to a single 
 
 ## The Two Architectures
 
+This section covers **API load balancing only**.
+It does **not** handle Kubernetes `Service.type=LoadBalancer`, which is addressed later using **MetalLB**.
+
 There are two industry-standard ways to achieve this. **Choose ONE path** based on your environment.
 
 ### Path A: External Load Balancer (Classic Enterprise)

@@ -2,6 +2,8 @@
 
 This section installs **Kube-VIP**, a high-availability Virtual IP manager that runs directly on your Control Plane nodes. This removes the need for a dedicated external Load Balancer VM.
 
+Kube-VIP is used **only for Kubernetes API high availability** and does not replace Service or application-level load balancing.
+
 ---
 
 ## Part 1: Kube-VIP Setup
@@ -20,8 +22,6 @@ A. Create the Manifest Directory
 
 Kubeadm expects static pods to live here.
 
-Bash
-
 ```
 mkdir -p /etc/kubernetes/manifests/
 ```
@@ -29,8 +29,6 @@ mkdir -p /etc/kubernetes/manifests/
 B. Determine your Network Interface
 
 You must bind the VIP to the correct physical cable.
-
-Bash
 
 ```
 ip a
@@ -47,8 +45,6 @@ ip a
 
 Set these environment variables. **Customize the VIP and Interface** for your network.
 
-Bash
-
 ```
 # 1. The Virtual IP you want to assign to the cluster (Must be unused!)
 export VIP=10.47.160.50
@@ -57,7 +53,7 @@ export VIP=10.47.160.50
 export INTERFACE=ens3
 
 # 3. Get the latest Kube-VIP version automatically
-export KVVERSION=$(curl -sL https://api.github.com/repos/kube-vip/kube-vip/releases | jq -r ".[0].name")
+KVVERSION=$(curl -sL https://api.github.com/repos/kube-vip/kube-vip/releases | jq -r ".[0].name")
 ```
 
 ---
@@ -66,20 +62,20 @@ export KVVERSION=$(curl -sL https://api.github.com/repos/kube-vip/kube-vip/relea
 
 We use `ctr` (the Containerd CLI) to run the image strictly to generate the configuration YAML.
 
-Bash
-
 ```
+
 # 1. Pull the image manually to the default namespace (Avoids startup delays)
 ctr image pull ghcr.io/kube-vip/kube-vip:$KVVERSION
 
 # 2. Create an alias to run the generator
-alias kube-vip="ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:$KVVERSION vip /kube-vip"
+alias kube-vip="ctr image pull ghcr.io/kube-vip/kube-vip:$KVVERSION; ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:$KVVERSION vip /kube-vip"
 
 # 3. Generate the YAML file
 kube-vip manifest pod \
     --interface $INTERFACE \
-    --vip $VIP \
+    --address $VIP \
     --controlplane \
+    --services \
     --arp \
     --leaderElection | tee /etc/kubernetes/manifests/kube-vip.yaml
 ```
@@ -90,15 +86,23 @@ kube-vip manifest pod \
 
 Kubernetes v1.29 changed how permissions work during bootstrap. We must point Kube-VIP to the special `super-admin.conf` file, or the cluster initialization will time out.
 
-Bash
+Solution (only run on the node which runs `kubeadm init`):
 
-```
-sed -i 's#path: /etc/kubernetes/admin.conf#path: /etc/kubernetes/super-admin.conf#' /etc/kubernetes/manifests/kube-vip.yaml
-```
+- command pre-kubeadm:
+    
+    ```
+    sed -i 's#path: /etc/kubernetes/admin.conf#path: /etc/kubernetes/super-admin.conf#' \
+              /etc/kubernetes/manifests/kube-vip.yaml
+    ```
+    
+- command post-kubeadm (Edit note: this causes a pod restart and may cause flaky behavior):
+    
+    ```
+    sed -i 's#path: /etc/kubernetes/super-admin.conf#path: /etc/kubernetes/admin.conf#' \
+              /etc/kubernetes/manifests/kube-vip.yaml
+    ```
 
 **Verify the File:**
-
-Bash
 
 ```
 cat /etc/kubernetes/manifests/kube-vip.yaml
@@ -115,16 +119,12 @@ cat /etc/kubernetes/manifests/kube-vip.yaml
 
 To ensure the fastest possible startup during the next step (Initialization), we pull the image into the k8s namespace `crictl`.
 
-Bash
-
 ```
 crictl pull ghcr.io/kube-vip/kube-vip:$KVVERSION
 ```
 
+Refer [here](https://github.com/kubernetes/kubeadm/blob/main/docs/ha-considerations.md) for more
+
 ---
-
-What Happens Next?
-
-You will not see the Pod running yet. It will only start when you run kubeadm init in the next step.
 
 Next: [Cluster Initialization & Node Joining](05-k8s-bootstrap.md)

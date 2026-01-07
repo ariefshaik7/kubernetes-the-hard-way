@@ -347,6 +347,8 @@ kubectl delete pvc smoke-test-pvc
     - Or external distributed storage (Ceph, cloud block storage)
         
 
+
+
 ---
 
 Next: [Encryption at Rest (Etcd)](07-etcd-encryption.md)

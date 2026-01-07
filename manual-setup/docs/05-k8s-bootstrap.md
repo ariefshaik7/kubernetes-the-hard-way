@@ -295,5 +295,7 @@ Remove LB exclusion label (if required):
 kubectl label nodes --all node.kubernetes.io/exclude-from-external-load-balancers-
 ```
 
+Refer [here](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/) for more
+
 ---
 Next: [Storage Setup (OpenEBS)](06-storage-openebs.md)
