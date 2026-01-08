@@ -10,7 +10,7 @@ This repository focuses on **architecture correctness, operational clarity, and 
 
 This cluster uses a **stacked etcd topology** with **three control plane nodes** to achieve high availability and fault tolerance.
 
-![Cluster Architecture](manual-setup/architecture/cluster-architecture-png)
+![Cluster Architecture](manual-setup/architecture/cluster-architecture.png)
 
 ---
 
